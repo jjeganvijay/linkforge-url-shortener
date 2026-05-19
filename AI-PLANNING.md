@@ -37,7 +37,8 @@ Build a full-stack URL Shortener where authenticated users create short links, t
 - [x] Device/browser/OS analytics via user-agent parsing
 - [x] Daily click trend charts (Recharts)
 - [x] Public stats API endpoint
-- [x] Edit destination URL (PATCH endpoint)
+- [x] Edit destination URL (PATCH endpoint + dashboard modal)
+- [x] Public stats page (`/stats` on frontend)
 
 ## 3. AI Workflow Steps
 

@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import LinkCard from '../components/LinkCard';
+import EditLinkModal from '../components/EditLinkModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import { isValidUrl } from '../utils/validators';
@@ -14,6 +15,8 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [editingLink, setEditingLink] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const [url, setUrl] = useState('');
   const [customAlias, setCustomAlias] = useState('');
@@ -68,6 +71,20 @@ export default function Dashboard() {
       toast.error(err.response?.data?.message || 'Failed to create link');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleEditSave = async (id, newUrl) => {
+    setSavingEdit(true);
+    try {
+      const res = await api.patch(`/links/${id}`, { url: newUrl });
+      setLinks((prev) => prev.map((l) => (l.id === id ? res.data.data.link : l)));
+      setEditingLink(null);
+      toast.success('Link updated');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update link');
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -177,6 +194,7 @@ export default function Dashboard() {
                 <LinkCard
                   key={link.id}
                   link={link}
+                  onEdit={setEditingLink}
                   onDelete={handleDelete}
                   deleting={deletingId === link.id}
                 />
@@ -185,6 +203,14 @@ export default function Dashboard() {
           )}
         </div>
       </main>
+
+      <EditLinkModal
+        link={editingLink}
+        open={Boolean(editingLink)}
+        onClose={() => setEditingLink(null)}
+        onSave={handleEditSave}
+        saving={savingEdit}
+      />
     </div>
   );
 }

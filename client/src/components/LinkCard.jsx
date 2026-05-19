@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { ExternalLink, BarChart3, Trash2, MousePointerClick } from 'lucide-react';
+import { ExternalLink, BarChart3, Trash2, MousePointerClick, Pencil } from 'lucide-react';
 import CopyButton from './CopyButton';
 import { formatDate, truncateUrl } from '../utils/validators';
 
-export default function LinkCard({ link, onDelete, deleting }) {
+export default function LinkCard({ link, onDelete, onEdit, deleting }) {
   return (
     <div className="card group transition hover:border-slate-700">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -45,6 +45,14 @@ export default function LinkCard({ link, onDelete, deleting }) {
 
         <div className="flex shrink-0 items-center gap-2">
           <CopyButton text={link.shortUrl} />
+          <button
+            type="button"
+            onClick={() => onEdit(link)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-700 hover:text-white"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Edit
+          </button>
           <Link
             to={`/analytics/${link.id}`}
             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-700 hover:text-white"

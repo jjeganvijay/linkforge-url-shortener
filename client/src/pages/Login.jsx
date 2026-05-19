@@ -88,6 +88,11 @@ export default function Login() {
             Sign up
           </Link>
         </p>
+        <p className="mt-3 text-center text-sm text-slate-500">
+          <Link to="/stats" className="hover:text-slate-300">
+            View public link stats
+          </Link>
+        </p>
       </div>
     </div>
   );

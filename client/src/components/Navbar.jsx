@@ -24,6 +24,12 @@ export default function Navbar() {
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
             </Link>
+            <Link
+              to="/stats"
+              className="text-sm text-slate-400 transition hover:text-white"
+            >
+              Public stats
+            </Link>
             <span className="text-sm text-slate-500">|</span>
             <span className="text-sm text-slate-300">{user.name}</span>
             <button

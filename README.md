@@ -69,8 +69,8 @@ URL_SHORTNER/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/url-shortener.git
-cd url-shortener
+git clone https://github.com/jjeganvijay/linkforge-url-shortener.git
+cd linkforge-url-shortener
 ```
 
 ### 2. Backend setup
@@ -132,16 +132,41 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ## Sample Output
 
-### Dashboard
-![Dashboard screenshot — add after testing]
+Add screenshots after local or live testing (`docs/screenshots/`). Example document shapes in MongoDB:
 
-### Analytics
-![Analytics screenshot — add after testing]
+**users**
+```json
+{
+  "_id": "...",
+  "name": "Demo User",
+  "email": "demo@example.com",
+  "passwordHash": "$2a$12$...",
+  "createdAt": "2026-05-18T10:00:00.000Z"
+}
+```
 
-### MongoDB Collections
-- **users** — registered accounts with hashed passwords
-- **links** — encrypted URLs with short codes and click counts
-- **visits** — individual click records with device/browser info
+**links** (original URL is encrypted — `encryptedUrl` is not human-readable)
+```json
+{
+  "shortCode": "abc12xy",
+  "encryptedUrl": "a1b2c3...",
+  "urlIv": "...",
+  "urlAuthTag": "...",
+  "clickCount": 5,
+  "userId": "..."
+}
+```
+
+**visits**
+```json
+{
+  "linkId": "...",
+  "visitedAt": "2026-05-18T10:05:00.000Z",
+  "device": "desktop",
+  "browser": "Chrome",
+  "os": "Windows"
+}
+```
 
 ## API Endpoints
 
@@ -163,6 +188,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 - [AI Planning Document](./AI-PLANNING.md)
 - [Architecture Diagrams](./ARCHITECTURE.md)
+- [Deployment Guide](./DEPLOY.md)
+- [Submission Checklist](./SUBMISSION.md)
+- [AI Prompts (interview prep)](./AI-PROMPTS.md)
+
+## Public stats page
+
+Visit `/stats` on the frontend to look up click count for any short code (uses `GET /api/public/:shortCode/stats`).
 
 ---
 
