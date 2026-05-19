@@ -3,9 +3,12 @@ import { ExternalLink, BarChart3, Trash2, MousePointerClick, Pencil } from 'luci
 import CopyButton from './CopyButton';
 import { formatDate, truncateUrl } from '../utils/validators';
 
-export default function LinkCard({ link, onDelete, onEdit, deleting }) {
+export default function LinkCard({ link, onDelete, onEdit, deleting, highlight, innerRef }) {
   return (
-    <div className="card group transition hover:border-slate-700">
+    <div
+      ref={innerRef}
+      className={`card group transition hover:border-slate-700 ${highlight ? 'link-card-highlight' : ''}`}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex items-center gap-2">

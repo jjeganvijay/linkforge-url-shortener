@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link2, Plus, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
@@ -9,6 +9,7 @@ import BulkUpload from '../components/BulkUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import { isValidUrl } from '../utils/validators';
+import CreatedLinkBanner from '../components/CreatedLinkBanner';
 
 export default function Dashboard() {
   const [links, setLinks] = useState([]);
@@ -23,6 +24,30 @@ export default function Dashboard() {
   const [customAlias, setCustomAlias] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
   const [formErrors, setFormErrors] = useState({});
+  const [lastCreated, setLastCreated] = useState(null);
+  const [highlightedId, setHighlightedId] = useState(null);
+
+  const linksSectionRef = useRef(null);
+  const highlightedCardRef = useRef(null);
+
+  const celebrateNewLink = useCallback((link) => {
+    setLastCreated(link);
+    setHighlightedId(link.id);
+
+    window.setTimeout(() => setHighlightedId(null), 5000);
+
+    requestAnimationFrame(() => {
+      linksSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => {
+        highlightedCardRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 400);
+    });
+
+    toast.success('Short link created — see it below!', { duration: 4000 });
+  }, []);
 
   const fetchLinks = async () => {
     setLoading(true);
@@ -63,11 +88,12 @@ export default function Dashboard() {
       if (expiresAt) payload.expiresAt = new Date(expiresAt).toISOString();
 
       const res = await api.post('/links', payload);
-      setLinks((prev) => [res.data.data.link, ...prev]);
+      const newLink = res.data.data.link;
+      setLinks((prev) => [newLink, ...prev]);
       setUrl('');
       setCustomAlias('');
       setExpiresAt('');
-      toast.success('Short link created!');
+      celebrateNewLink(newLink);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create link');
     } finally {
@@ -171,19 +197,37 @@ export default function Dashboard() {
               {creating ? 'Creating...' : 'Shorten URL'}
             </button>
           </form>
+          <p className="mt-3 text-xs text-slate-500">
+            Your new short link will appear highlighted in the list below.
+          </p>
         </div>
+
+        <CreatedLinkBanner
+          link={lastCreated}
+          onDismiss={() => setLastCreated(null)}
+          onViewInList={() => {
+            linksSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            highlightedCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}
+        />
 
         <div className="mb-8">
           <BulkUpload
-            onCreated={(created) => setLinks((prev) => [...created, ...prev])}
+            onCreated={(created) => {
+              setLinks((prev) => [...created, ...prev]);
+              if (created[0]) celebrateNewLink(created[0]);
+            }}
           />
         </div>
 
-        <div>
+        <div ref={linksSectionRef} className="scroll-mt-24">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white">
               Your Links {links.length > 0 && `(${links.length})`}
             </h2>
+            {links.length > 0 && (
+              <span className="text-xs text-slate-500">Newest at the top</span>
+            )}
           </div>
 
           {loading ? (
@@ -204,6 +248,8 @@ export default function Dashboard() {
                   onEdit={setEditingLink}
                   onDelete={handleDelete}
                   deleting={deletingId === link.id}
+                  highlight={link.id === highlightedId}
+                  innerRef={link.id === highlightedId ? highlightedCardRef : undefined}
                 />
               ))}
             </div>
