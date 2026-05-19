@@ -5,6 +5,7 @@ import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import LinkCard from '../components/LinkCard';
 import EditLinkModal from '../components/EditLinkModal';
+import BulkUpload from '../components/BulkUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import { isValidUrl } from '../utils/validators';
@@ -170,6 +171,12 @@ export default function Dashboard() {
               {creating ? 'Creating...' : 'Shorten URL'}
             </button>
           </form>
+        </div>
+
+        <div className="mb-8">
+          <BulkUpload
+            onCreated={(created) => setLinks((prev) => [...created, ...prev])}
+          />
         </div>
 
         <div>

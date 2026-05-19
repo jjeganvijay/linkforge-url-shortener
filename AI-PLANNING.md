@@ -39,6 +39,8 @@ Build a full-stack URL Shortener where authenticated users create short links, t
 - [x] Public stats API endpoint
 - [x] Edit destination URL (PATCH endpoint + dashboard modal)
 - [x] Public stats page (`/stats` on frontend)
+- [x] Bulk URL shortening via CSV (`POST /api/links/bulk` + dashboard UI)
+- [x] Geolocation / country on visits (geoip-lite)
 
 ## 3. AI Workflow Steps
 

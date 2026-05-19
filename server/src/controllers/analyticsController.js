@@ -3,6 +3,7 @@ const Visit = require('../models/Visit');
 const { UAParser } = require('ua-parser-js');
 const { decrypt } = require('../utils/encrypt');
 const { formatLink } = require('./linkController');
+const { getCountryFromIp } = require('../utils/geoip');
 
 const getAnalytics = async (req, res) => {
   try {
@@ -43,6 +44,7 @@ const getAnalytics = async (req, res) => {
             device: v.device,
             browser: v.browser,
             os: v.os,
+            country: v.country,
           })),
           dailyClicks: dailyClicks.map((d) => ({ date: d._id, clicks: d.clicks })),
         },
@@ -100,6 +102,7 @@ const handleRedirect = async (req, res) => {
       device: result.device.type || 'desktop',
       browser: result.browser.name || 'Unknown',
       os: result.os.name || 'Unknown',
+      country: getCountryFromIp(req.ip),
     });
 
     link.clickCount += 1;

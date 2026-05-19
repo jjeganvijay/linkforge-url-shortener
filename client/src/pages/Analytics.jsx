@@ -169,6 +169,7 @@ export default function Analytics() {
                     <th className="pb-3 pr-4 font-medium">
                       <Globe className="inline h-4 w-4" /> Browser
                     </th>
+                    <th className="pb-3 pr-4 font-medium">Country</th>
                     <th className="pb-3 font-medium">OS</th>
                   </tr>
                 </thead>
@@ -178,6 +179,7 @@ export default function Analytics() {
                       <td className="py-3 pr-4 text-slate-300">{formatDate(visit.visitedAt)}</td>
                       <td className="py-3 pr-4 capitalize text-slate-300">{visit.device}</td>
                       <td className="py-3 pr-4 text-slate-300">{visit.browser}</td>
+                      <td className="py-3 pr-4 text-slate-300">{visit.country || 'Unknown'}</td>
                       <td className="py-3 text-slate-300">{visit.os}</td>
                     </tr>
                   ))}

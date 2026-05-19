@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const {
   createLink,
+  bulkCreateLinks,
   getLinks,
   deleteLink,
   updateLink,
@@ -28,6 +29,14 @@ router.post(
   ],
   validate,
   createLink
+);
+
+router.post(
+  '/bulk',
+  createLinkLimiter,
+  [body('csv').notEmpty().withMessage('CSV content is required')],
+  validate,
+  bulkCreateLinks
 );
 
 router.get('/', getLinks);

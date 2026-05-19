@@ -33,6 +33,10 @@ const visitSchema = new mongoose.Schema(
       type: String,
       default: 'Unknown',
     },
+    country: {
+      type: String,
+      default: 'Unknown',
+    },
   },
   { timestamps: false }
 );

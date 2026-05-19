@@ -38,6 +38,8 @@ A full-stack URL shortener built for the Katomaran Technologies Hackathon 2026. 
 - Daily click trend charts
 - Public stats API
 - Edit destination URL
+- Bulk URL shortening via CSV
+- Country geolocation on visits (geoip-lite)
 
 ## Tech Stack
 
@@ -176,6 +178,7 @@ Add screenshots after local or live testing (`docs/screenshots/`). Example docum
 | POST | `/api/auth/login` | No | Login |
 | GET | `/api/auth/me` | Yes | Current user |
 | POST | `/api/links` | Yes | Create link |
+| POST | `/api/links/bulk` | Yes | Bulk create from CSV text |
 | GET | `/api/links` | Yes | List links |
 | DELETE | `/api/links/:id` | Yes | Delete link |
 | PATCH | `/api/links/:id` | Yes | Edit URL |

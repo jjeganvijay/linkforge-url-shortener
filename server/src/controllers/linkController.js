@@ -40,33 +40,33 @@ const createUniqueShortCode = async (preferredCode = null) => {
   return code;
 };
 
+const createLinkRecord = async (userId, url, customAlias = null, expiresAt = null) => {
+  const normalized = normalizeUrl(url);
+  if (!isValidUrl(normalized)) {
+    throw new Error('Please provide a valid URL');
+  }
+  const shortCode = await createUniqueShortCode(customAlias);
+  const { encryptedUrl, urlIv, urlAuthTag } = encrypt(normalized);
+  return Link.create({
+    userId,
+    shortCode,
+    encryptedUrl,
+    urlIv,
+    urlAuthTag,
+    customAlias: customAlias || null,
+    expiresAt: expiresAt ? new Date(expiresAt) : null,
+  });
+};
+
 const createLink = async (req, res) => {
   try {
     const { url, customAlias, expiresAt } = req.body;
-    const normalized = normalizeUrl(url);
-
-    if (!isValidUrl(normalized)) {
-      return res.status(400).json({ success: false, message: 'Please provide a valid URL' });
-    }
-
-    let shortCode;
+    let link;
     try {
-      shortCode = await createUniqueShortCode(customAlias);
+      link = await createLinkRecord(req.user._id, url, customAlias, expiresAt);
     } catch (err) {
       return res.status(400).json({ success: false, message: err.message });
     }
-
-    const { encryptedUrl, urlIv, urlAuthTag } = encrypt(normalized);
-
-    const link = await Link.create({
-      userId: req.user._id,
-      shortCode,
-      encryptedUrl,
-      urlIv,
-      urlAuthTag,
-      customAlias: customAlias || null,
-      expiresAt: expiresAt ? new Date(expiresAt) : null,
-    });
 
     res.status(201).json({
       success: true,
@@ -75,6 +75,54 @@ const createLink = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to create short link' });
+  }
+};
+
+const bulkCreateLinks = async (req, res) => {
+  try {
+    const { csv } = req.body;
+    if (!csv || typeof csv !== 'string') {
+      return res.status(400).json({ success: false, message: 'CSV content is required' });
+    }
+
+    const lines = csv
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    if (lines.length === 0) {
+      return res.status(400).json({ success: false, message: 'No URLs found in CSV' });
+    }
+    if (lines.length > 50) {
+      return res.status(400).json({ success: false, message: 'Maximum 50 URLs per bulk upload' });
+    }
+
+    const created = [];
+    const failed = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const parts = lines[i].split(',').map((p) => p.trim());
+      const url = parts[0];
+      const alias = parts[1] || null;
+      try {
+        const link = await createLinkRecord(req.user._id, url, alias);
+        created.push(formatLink(link));
+      } catch (err) {
+        failed.push({ line: i + 1, input: lines[i], reason: err.message });
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Created ${created.length} link(s), ${failed.length} failed`,
+      data: {
+        created,
+        failed,
+        summary: { total: lines.length, success: created.length, failed: failed.length },
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Bulk upload failed' });
   }
 };
 
@@ -160,4 +208,12 @@ const getQRCode = async (req, res) => {
   }
 };
 
-module.exports = { createLink, getLinks, deleteLink, updateLink, getQRCode, formatLink };
+module.exports = {
+  createLink,
+  bulkCreateLinks,
+  getLinks,
+  deleteLink,
+  updateLink,
+  getQRCode,
+  formatLink,
+};
