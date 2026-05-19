@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const connectDB = require('./config/db');
+const validateEnv = require('./config/validateEnv');
 const { port, allowedOrigins } = require('./config/env');
 
 const authRoutes = require('./routes/authRoutes');
@@ -26,8 +27,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'URL Shortener API is running' });
@@ -50,6 +51,7 @@ app.use((err, req, res, next) => {
 
 async function start() {
   try {
+    validateEnv();
     await connectDB();
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);

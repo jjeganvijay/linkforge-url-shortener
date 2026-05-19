@@ -25,7 +25,7 @@ const signup = async (req, res) => {
       message: 'Account created successfully',
       data: {
         token,
-        user: { id: user._id, name: user.name, email: user.email },
+        user: { id: user._id.toString(), name: user.name, email: user.email },
       },
     });
   } catch (error) {
@@ -54,7 +54,7 @@ const login = async (req, res) => {
       message: 'Login successful',
       data: {
         token,
-        user: { id: user._id, name: user.name, email: user.email },
+        user: { id: user._id.toString(), name: user.name, email: user.email },
       },
     });
   } catch (error) {
@@ -67,7 +67,7 @@ const getMe = async (req, res) => {
     success: true,
     data: {
       user: {
-        id: req.user._id,
+        id: req.user._id.toString(),
         name: req.user.name,
         email: req.user.email,
       },

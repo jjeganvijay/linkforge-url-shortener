@@ -1,12 +1,17 @@
 const Link = require('../models/Link');
 const Visit = require('../models/Visit');
 const { encrypt, decrypt } = require('../utils/encrypt');
-const { generateShortCode, isValidUrl, normalizeUrl } = require('../utils/generateShortCode');
+const {
+  generateShortCode,
+  isValidUrl,
+  normalizeUrl,
+  isReservedCode,
+} = require('../utils/generateShortCode');
 const { baseUrl } = require('../config/env');
 const QRCode = require('qrcode');
 
 const formatLink = (link) => ({
-  id: link._id,
+  id: link._id.toString(),
   shortCode: link.shortCode,
   shortUrl: `${baseUrl}/${link.shortCode}`,
   originalUrl: decrypt(link.encryptedUrl, link.urlIv, link.urlAuthTag),
@@ -23,6 +28,9 @@ const createUniqueShortCode = async (preferredCode = null) => {
     if (!/^[a-z0-9-_]{3,20}$/.test(alias)) {
       throw new Error('Custom alias must be 3-20 characters (letters, numbers, -, _)');
     }
+    if (isReservedCode(alias)) {
+      throw new Error('This short code is reserved');
+    }
     const exists = await Link.findOne({ shortCode: alias });
     if (exists) throw new Error('Custom alias already taken');
     return alias;
@@ -33,6 +41,7 @@ const createUniqueShortCode = async (preferredCode = null) => {
   let attempts = 0;
   while (exists && attempts < 10) {
     code = generateShortCode();
+    if (isReservedCode(code)) continue;
     exists = await Link.findOne({ shortCode: code });
     attempts++;
   }

@@ -8,7 +8,10 @@ export default function Navbar() {
   return (
     <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link to="/dashboard" className="flex items-center gap-2 text-lg font-bold text-white">
+        <Link
+          to={user ? '/dashboard' : '/login'}
+          className="flex items-center gap-2 text-lg font-bold text-white"
+        >
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600">
             <Link2 className="h-5 w-5" />
           </div>

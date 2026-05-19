@@ -1,5 +1,19 @@
 const CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
+const RESERVED_CODES = new Set([
+  'api',
+  'auth',
+  'login',
+  'signup',
+  'dashboard',
+  'stats',
+  'public',
+  'health',
+  'link-error',
+]);
+
+const isReservedCode = (code) => RESERVED_CODES.has(String(code).toLowerCase());
+
 const generateShortCode = (length = 7) => {
   let code = '';
   for (let i = 0; i < length; i++) {
@@ -25,4 +39,4 @@ const normalizeUrl = (url) => {
   return trimmed;
 };
 
-module.exports = { generateShortCode, isValidUrl, normalizeUrl };
+module.exports = { generateShortCode, isValidUrl, normalizeUrl, isReservedCode, RESERVED_CODES };

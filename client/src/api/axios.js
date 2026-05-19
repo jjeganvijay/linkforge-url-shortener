@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || '/api';
 const api = axios.create({
   baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 30000,
 });
 
 api.interceptors.request.use((config) => {
@@ -18,11 +19,20 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthRequest =
+      error.config?.url?.includes('/auth/login') ||
+      error.config?.url?.includes('/auth/signup');
+
+    if (error.response?.status === 401 && !isAuthRequest) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      const path = window.location.pathname;
+      if (path !== '/login' && path !== '/signup') {
+        const reason =
+          error.response?.data?.message === 'Invalid or expired token'
+            ? 'expired'
+            : 'required';
+        window.location.assign(`/login?session=${reason}`);
       }
     }
     return Promise.reject(error);

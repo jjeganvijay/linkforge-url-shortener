@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,13 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sessionNotice =
+    searchParams.get('session') === 'expired'
+      ? 'Your session expired (login lasts 7 days). Please sign in again.'
+      : searchParams.get('session') === 'required'
+        ? 'Please sign in to continue.'
+        : null;
 
   const validate = () => {
     const newErrors = {};
@@ -43,7 +50,14 @@ export default function Login() {
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-white">Welcome back</h1>
           <p className="mt-1 text-sm text-slate-400">Sign in to manage your short links</p>
+          <p className="mt-2 text-xs text-slate-500">Stay signed in for 7 days on this device</p>
         </div>
+
+        {sessionNotice && (
+          <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+            {sessionNotice}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

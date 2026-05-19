@@ -5,6 +5,10 @@ const connectDB = async () => {
   if (!mongoUri) {
     throw new Error('MONGODB_URI is not set in environment');
   }
+  mongoose.connection.on('disconnected', () => {
+    console.warn('MongoDB disconnected');
+  });
+
   await mongoose.connect(mongoUri);
   console.log('MongoDB connected successfully');
 };
