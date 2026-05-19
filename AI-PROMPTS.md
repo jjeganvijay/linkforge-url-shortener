@@ -52,7 +52,15 @@ Summaries of prompts used while building LinkForge. Be ready to explain what you
 
 ---
 
-## 7. Deployment
+## 7. Bulk CSV and geolocation
+
+> Add POST /api/links/bulk accepting CSV text (one URL per line, optional alias). Add geoip-lite country on each visit. Dashboard bulk upload textarea and country column in analytics.
+
+**Outcome:** `bulkCreateLinks`, `BulkUpload.jsx`, `geoip.js`, country on visits.
+
+---
+
+## 8. Deployment
 
 > Add render.yaml for Node server in /server with health check /api/health, vercel.json for Vite SPA rewrites, and CORS allowing FRONTEND_URL from environment.
 
