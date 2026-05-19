@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import PublicStats from './pages/PublicStats';
+import LinkError from './pages/LinkError';
 
 export default function App() {
   const { user } = useAuth();
@@ -19,6 +20,7 @@ export default function App() {
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
       <Route path="/stats" element={<PublicStats />} />
+      <Route path="/link-error" element={<LinkError />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />

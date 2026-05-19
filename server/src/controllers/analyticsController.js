@@ -4,6 +4,12 @@ const { UAParser } = require('ua-parser-js');
 const { decrypt } = require('../utils/encrypt');
 const { formatLink } = require('./linkController');
 const { getCountryFromIp } = require('../utils/geoip');
+const { frontendUrl } = require('../config/env');
+
+const redirectToLinkError = (res, reason, shortCode) => {
+  const params = new URLSearchParams({ reason, code: shortCode });
+  return res.redirect(302, `${frontendUrl}/link-error?${params.toString()}`);
+};
 
 const getAnalytics = async (req, res) => {
   try {
@@ -85,11 +91,11 @@ const handleRedirect = async (req, res) => {
     const link = await Link.findOne({ shortCode, isActive: true });
 
     if (!link) {
-      return res.status(404).json({ success: false, message: 'Short link not found' });
+      return redirectToLinkError(res, 'notfound', shortCode);
     }
 
     if (link.expiresAt && new Date() > link.expiresAt) {
-      return res.status(410).json({ success: false, message: 'This link has expired' });
+      return redirectToLinkError(res, 'expired', shortCode);
     }
 
     const parser = new UAParser(req.headers['user-agent']);

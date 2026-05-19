@@ -15,5 +15,8 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET,
   encryptionKey: process.env.ENCRYPTION_KEY,
   allowedOrigins: parseOrigins(process.env.FRONTEND_URL, 'http://localhost:5173'),
+  frontendUrl:
+    parseOrigins(process.env.FRONTEND_URL, 'http://localhost:5173')[0] ||
+    'http://localhost:5173',
   baseUrl: process.env.BASE_URL || 'http://localhost:5000',
 };
