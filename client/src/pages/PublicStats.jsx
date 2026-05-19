@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BarChart3, Search, Link2 } from 'lucide-react';
+import { BarChart3, Search } from 'lucide-react';
+import Navbar from '../components/Navbar';
 import axios from 'axios';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
@@ -34,19 +34,7 @@ export default function PublicStats() {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      <header className="border-b border-slate-800 bg-slate-900/80 px-4 py-4">
-        <div className="mx-auto flex max-w-2xl items-center justify-between">
-          <Link to="/login" className="flex items-center gap-2 font-bold text-white">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600">
-              <Link2 className="h-5 w-5" />
-            </div>
-            LinkForge
-          </Link>
-          <Link to="/login" className="text-sm text-brand-400 hover:text-brand-300">
-            Sign in
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 text-center">

@@ -15,7 +15,7 @@ export default function Navbar() {
           LinkForge
         </Link>
 
-        {user && (
+        {user ? (
           <div className="flex items-center gap-4">
             <Link
               to="/dashboard"
@@ -39,6 +39,18 @@ export default function Navbar() {
               <LogOut className="h-4 w-4" />
               Logout
             </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link to="/stats" className="text-sm text-slate-400 transition hover:text-white">
+              Public stats
+            </Link>
+            <Link to="/login" className="text-sm text-brand-400 hover:text-brand-300">
+              Sign in
+            </Link>
+            <Link to="/signup" className="btn-primary py-2 text-sm">
+              Sign up
+            </Link>
           </div>
         )}
       </div>
