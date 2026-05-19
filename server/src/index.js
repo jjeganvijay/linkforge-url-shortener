@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const connectDB = require('./config/db');
-const { port, frontendUrl } = require('./config/env');
+const { port, allowedOrigins } = require('./config/env');
 
 const authRoutes = require('./routes/authRoutes');
 const linkRoutes = require('./routes/linkRoutes');
@@ -16,7 +16,13 @@ app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(
   cors({
-    origin: frontendUrl,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
     credentials: true,
   })
 );
