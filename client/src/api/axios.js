@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const PROD_FALLBACK_API_URL = 'https://shortly-url-shortener-hefw.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? PROD_FALLBACK_API_URL : '/api');
 const CSRF_STORAGE_KEY = 'shortly-csrf';
 
 const getCsrfToken = () => {
