@@ -1,4 +1,4 @@
-const { mongoUri, jwtSecret, encryptionKey } = require('./env');
+const { mongoUri, jwtSecret, encryptionKey, googleClientId } = require('./env');
 
 const validateEnv = () => {
   const missing = [];
@@ -16,6 +16,10 @@ const validateEnv = () => {
 
   if (jwtSecret.length < 16) {
     throw new Error('JWT_SECRET must be at least 16 characters');
+  }
+
+  if (googleClientId && googleClientId.length < 10) {
+    throw new Error('GOOGLE_CLIENT_ID looks invalid');
   }
 };
 

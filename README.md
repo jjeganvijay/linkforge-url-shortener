@@ -1,4 +1,4 @@
-# LinkForge — URL Shortener with Analytics
+# Shortly â€” URL Shortener with Analytics
 
 A full-stack URL shortener built for the Katomaran Technologies Hackathon 2026. Create short links, track click analytics, and manage everything from a secure dashboard. Original URLs are encrypted at rest using AES-256-GCM.
 
@@ -110,6 +110,7 @@ Frontend runs at `http://localhost:5173`
 | `MONGODB_URI` | MongoDB Atlas connection string |
 | `JWT_SECRET` | Secret for JWT signing |
 | `ENCRYPTION_KEY` | 64-char hex string (32 bytes for AES-256) |
+| `GOOGLE_CLIENT_ID` | (Optional) Google OAuth client id for Google sign-in |
 | `FRONTEND_URL` | Frontend URL for CORS |
 | `BASE_URL` | Backend base URL for short links |
 
@@ -118,6 +119,7 @@ Frontend runs at `http://localhost:5173`
 | Variable | Description |
 |----------|-------------|
 | `VITE_API_URL` | Backend API URL |
+| `VITE_GOOGLE_CLIENT_ID` | (Optional) Google client id for the Google button |
 
 Generate an encryption key:
 ```bash
@@ -176,6 +178,7 @@ Add screenshots after local or live testing (`docs/screenshots/`). Example docum
 |--------|----------|------|-------------|
 | POST | `/api/auth/signup` | No | Register |
 | POST | `/api/auth/login` | No | Login |
+| POST | `/api/auth/google` | No | Login with Google (ID token) |
 | GET | `/api/auth/me` | Yes | Current user |
 | POST | `/api/links` | Yes | Create link |
 | POST | `/api/links/bulk` | Yes | Bulk create from CSV text |
@@ -202,3 +205,4 @@ Visit `/stats` on the frontend to look up click count for any short code (uses `
 ---
 
 This project is a part of a hackathon run by https://katomaran.com
+

@@ -5,7 +5,7 @@
 | Behavior | Detail |
 |----------|--------|
 | **Stay logged in?** | Yes, on the same browser/device until you **log out** or the **JWT expires (7 days)**. |
-| **Storage** | Token in `localStorage` (standard for SPAs). |
+| **Storage** | Token stored as an **httpOnly cookie** (`token`) so it is not accessible to JavaScript. |
 | **After 7 days** | API returns 401 → redirect to login with “session expired” message. |
 | **Invalid token** | Cleared automatically; user must sign in again. |
 | **Logout** | Clears token immediately. |

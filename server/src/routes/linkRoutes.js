@@ -7,12 +7,15 @@ const {
   deleteLink,
   updateLink,
   getQRCode,
+  checkAlias,
 } = require('../controllers/linkController');
 const auth = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { createLinkLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
+
+router.get('/check-alias/:alias', checkAlias);
 
 router.use(auth);
 
@@ -46,6 +49,7 @@ router.patch(
   [
     body('url').optional().notEmpty().withMessage('URL cannot be empty'),
     body('expiresAt').optional().isISO8601().withMessage('Invalid expiry date'),
+    body('isActive').optional().isBoolean().withMessage('isActive must be boolean'),
   ],
   validate,
   updateLink

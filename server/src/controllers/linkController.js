@@ -165,7 +165,7 @@ const deleteLink = async (req, res) => {
 
 const updateLink = async (req, res) => {
   try {
-    const { url, expiresAt } = req.body;
+    const { url, expiresAt, isActive } = req.body;
     const link = await Link.findOne({ _id: req.params.id, userId: req.user._id });
     if (!link) {
       return res.status(404).json({ success: false, message: 'Link not found' });
@@ -184,6 +184,10 @@ const updateLink = async (req, res) => {
 
     if (expiresAt !== undefined) {
       link.expiresAt = expiresAt ? new Date(expiresAt) : null;
+    }
+
+    if (isActive !== undefined) {
+      link.isActive = Boolean(isActive);
     }
 
     await link.save();
@@ -217,6 +221,22 @@ const getQRCode = async (req, res) => {
   }
 };
 
+const checkAlias = async (req, res) => {
+  try {
+    const { alias } = req.params;
+    if (!alias || !/^[a-z0-9-_]{3,20}$/.test(alias.toLowerCase())) {
+      return res.json({ available: false, reason: 'Invalid format' });
+    }
+    if (isReservedCode(alias)) {
+      return res.json({ available: false, reason: 'Reserved' });
+    }
+    const exists = await Link.findOne({ shortCode: alias.toLowerCase() });
+    res.json({ available: !exists, reason: exists ? 'Taken' : null });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to check alias' });
+  }
+};
+
 module.exports = {
   createLink,
   bulkCreateLinks,
@@ -224,5 +244,6 @@ module.exports = {
   deleteLink,
   updateLink,
   getQRCode,
+  checkAlias,
   formatLink,
 };

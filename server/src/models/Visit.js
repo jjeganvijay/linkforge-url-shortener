@@ -37,6 +37,30 @@ const visitSchema = new mongoose.Schema(
       type: String,
       default: 'Unknown',
     },
+    referrer: {
+      type: String,
+      default: null,
+    },
+    referrerHost: {
+      type: String,
+      default: 'Direct',
+      index: true,
+    },
+    utmSource: {
+      type: String,
+      default: null,
+      index: true,
+    },
+    utmMedium: {
+      type: String,
+      default: null,
+      index: true,
+    },
+    utmCampaign: {
+      type: String,
+      default: null,
+      index: true,
+    },
   },
   { timestamps: false }
 );

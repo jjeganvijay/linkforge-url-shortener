@@ -1,9 +1,10 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function ProtectedRoute() {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -14,7 +15,13 @@ export default function ProtectedRoute() {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to="/login?session=required"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    );
   }
 
   return <Outlet />;

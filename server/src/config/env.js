@@ -14,6 +14,8 @@ module.exports = {
   mongoUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   encryptionKey: process.env.ENCRYPTION_KEY,
+  googleClientId: process.env.GOOGLE_CLIENT_ID || null,
+  metricsToken: process.env.METRICS_TOKEN || null,
   allowedOrigins: parseOrigins(process.env.FRONTEND_URL, 'http://localhost:5173'),
   frontendUrl:
     parseOrigins(process.env.FRONTEND_URL, 'http://localhost:5173')[0] ||

@@ -1,58 +1,72 @@
 import { Link } from 'react-router-dom';
-import { Link2, LogOut, LayoutDashboard } from 'lucide-react';
+import { Link2, LogOut, LayoutDashboard, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
+function UserAvatar({ name }) {
+  const initial = (name || '?').charAt(0).toUpperCase();
+  return (
+    <span
+      className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-heart-coral text-sm font-bold text-white shadow-md"
+      aria-hidden="true"
+    >
+      {initial}
+    </span>
+  );
+}
 
 export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <nav className="sticky top-0 z-40 border-b border-white/10 bg-app-raised/65 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link
-          to={user ? '/dashboard' : '/login'}
-          className="flex items-center gap-2 text-lg font-bold text-white"
+          to={user ? '/dashboard' : '/'}
+          className="group flex items-center gap-2.5 transition"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600">
-            <Link2 className="h-5 w-5" />
+          <div className="icon-badge h-10 w-10 rounded-xl transition group-hover:scale-105">
+            <Link2 className="h-5 w-5 text-white" />
           </div>
-          LinkForge
+          <span className="text-lg font-bold tracking-tight gradient-text">Shortly</span>
         </Link>
 
         {user ? (
-          <div className="flex items-center gap-4">
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white"
-            >
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/dashboard" className="btn-ghost hidden sm:inline-flex">
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
             </Link>
-            <Link
-              to="/stats"
-              className="text-sm text-slate-400 transition hover:text-white"
-            >
-              Public stats
+            <Link to="/stats" className="btn-ghost hidden sm:inline-flex">
+              <BarChart3 className="h-4 w-4" />
+              Stats
             </Link>
-            <span className="text-sm text-slate-500">|</span>
-            <span className="text-sm text-slate-300">{user.name}</span>
+            <div className="hidden h-6 w-px bg-slate-700 sm:block" />
+            <div className="flex items-center gap-2 pl-1">
+              <UserAvatar name={user.name} />
+              <span className="hidden max-w-[120px] truncate text-sm font-medium text-slate-200 md:inline">
+                {user.name}
+              </span>
+            </div>
             <button
+              type="button"
               onClick={logout}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:bg-slate-800 hover:text-white"
+              className="btn-ghost text-slate-400"
+              title="Log out"
             >
               <LogOut className="h-4 w-4" />
-              Logout
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
-            <Link to="/stats" className="text-sm text-slate-400 transition hover:text-white">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link to="/stats" className="btn-ghost">
               Public stats
             </Link>
-            <Link to="/login" className="text-sm text-brand-400 hover:text-brand-300">
+            <Link to="/login" className="btn-ghost hidden sm:inline-flex">
               Sign in
             </Link>
             <Link to="/signup" className="btn-primary py-2 text-sm">
-              Sign up
+              Get started
             </Link>
           </div>
         )}

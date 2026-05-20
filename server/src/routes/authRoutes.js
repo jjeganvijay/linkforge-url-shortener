@@ -1,11 +1,21 @@
 const express = require('express');
 const { body } = require('express-validator');
-const { signup, login, getMe } = require('../controllers/authController');
+const {
+  signup,
+  login,
+  loginWithGoogle,
+  getMe,
+  logout,
+  updateProfile,
+  getCsrf,
+} = require('../controllers/authController');
 const auth = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { authLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
+
+router.get('/csrf', getCsrf);
 
 router.post(
   '/signup',
@@ -30,6 +40,16 @@ router.post(
   login
 );
 
+router.post(
+  '/google',
+  authLimiter,
+  [body('credential').notEmpty().withMessage('Google credential is required')],
+  validate,
+  loginWithGoogle
+);
+
 router.get('/me', auth, getMe);
+router.put('/me', auth, updateProfile);
+router.post('/logout', auth, logout);
 
 module.exports = router;

@@ -17,7 +17,21 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: {
       type: String,
-      required: true,
+      default: null,
+    },
+    authProvider: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local',
+    },
+    googleSub: {
+      type: String,
+      default: null,
+      index: true,
+    },
+    pictureUrl: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }
