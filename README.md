@@ -1,13 +1,13 @@
-# Shortly â€” URL Shortener with Analytics
+# Shortly - URL Shortener with Analytics
 
 A full-stack URL shortener built for the Katomaran Technologies Hackathon 2026. Create short links, track click analytics, and manage everything from a secure dashboard. Original URLs are encrypted at rest using AES-256-GCM.
 
 ## Live Demo
 
-> Deploy and add your URLs here before submission.
+Live links:
 
-- **Frontend:** `https://your-app.vercel.app`
-- **Backend:** `https://your-api.onrender.com`
+- **Frontend:** `https://linkforge-url-shortener.vercel.app/`
+- **Backend:** `https://shortly-url-shortener-hefw.onrender.com/`
 
 ## Demo Video
 
@@ -205,4 +205,3 @@ Visit `/stats` on the frontend to look up click count for any short code (uses `
 ---
 
 This project is a part of a hackathon run by https://katomaran.com
-

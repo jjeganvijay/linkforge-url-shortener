@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: linkforge-api
+    name: shortly-api
     runtime: node
     plan: free
-    region: singapore
+    region: oregon
     rootDir: server
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
