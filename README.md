@@ -11,9 +11,7 @@ Live links:
 
 ## Demo Video
 
-> Record a Loom/YouTube walkthrough and add the link here.
-
-- **Video:** `https://loom.com/share/your-video-id`
+- **Video (Loom):** `https://www.loom.com/share/4469d5a4883f40b8b1297ebff47b57f6`
 
 ## Features
 
@@ -180,6 +178,7 @@ Add screenshots after local or live testing (`docs/screenshots/`). Example docum
 | POST | `/api/auth/login` | No | Login |
 | POST | `/api/auth/google` | No | Login with Google (ID token) |
 | GET | `/api/auth/me` | Yes | Current user |
+| DELETE | `/api/auth/me` | Yes | Delete account (also deletes links + visits) |
 | POST | `/api/links` | Yes | Create link |
 | POST | `/api/links/bulk` | Yes | Bulk create from CSV text |
 | GET | `/api/links` | Yes | List links |
