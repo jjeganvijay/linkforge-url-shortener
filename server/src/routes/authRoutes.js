@@ -8,6 +8,7 @@ const {
   logout,
   updateProfile,
   getCsrf,
+  deleteAccount,
 } = require('../controllers/authController');
 const auth = require('../middleware/auth');
 const validate = require('../middleware/validate');
@@ -50,6 +51,7 @@ router.post(
 
 router.get('/me', auth, getMe);
 router.put('/me', auth, updateProfile);
+router.delete('/me', auth, deleteAccount);
 router.post('/logout', auth, logout);
 
 module.exports = router;

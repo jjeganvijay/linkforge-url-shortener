@@ -159,6 +159,52 @@ const updateProfile = async (req, res) => {
   }
 }; 
 
+const clearSessionCookies = (res) => {
+  const isProd = process.env.NODE_ENV === 'production';
+  res.clearCookie('token', getClearAuthCookieOptions());
+  res.clearCookie('csrfToken', {
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/',
+  });
+};
+
+const deleteAccount = async (req, res) => {
+  try {
+    const Link = require('../models/Link');
+    const Visit = require('../models/Visit');
+
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const links = await Link.find({ userId }, { _id: 1 }).lean();
+    const linkIds = links.map((l) => l._id);
+
+    let deletedVisits = 0;
+    if (linkIds.length > 0) {
+      const visitResult = await Visit.deleteMany({ linkId: { $in: linkIds } });
+      deletedVisits = visitResult.deletedCount || 0;
+    }
+
+    const linkResult = await Link.deleteMany({ userId });
+    const deletedLinks = linkResult.deletedCount || 0;
+
+    await User.deleteOne({ _id: userId });
+
+    clearSessionCookies(res);
+
+    res.json({
+      success: true,
+      message: 'Account deleted successfully',
+      data: { deletedLinks, deletedVisits },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to delete account' });
+  }
+};
+
 const loginWithGoogle = async (req, res) => {
   try {
     const credential = req.body?.credential;
@@ -237,4 +283,13 @@ const loginWithGoogle = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, getMe, logout, getCsrf, updateProfile, loginWithGoogle };
+module.exports = {
+  signup,
+  login,
+  getMe,
+  logout,
+  getCsrf,
+  updateProfile,
+  deleteAccount,
+  loginWithGoogle,
+};
