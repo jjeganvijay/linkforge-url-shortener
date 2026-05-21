@@ -1,10 +1,38 @@
-import { Link } from 'react-router-dom';
-import { Sun, Moon, BarChart3, Palette } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Sun, Moon, BarChart3, Palette, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import PageHeader from '../../components/PageHeader';
 import { useTheme } from '../../context/ThemeContext';
+import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Settings() {
   const { theme, setTheme, isDark } = useTheme();
+  const { clearSession } = useAuth();
+  const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (deleting) return;
+
+    const ok = window.confirm(
+      'Delete your account permanently?\n\nThis will delete all your links and analytics. This cannot be undone.'
+    );
+    if (!ok) return;
+
+    setDeleting(true);
+    try {
+      await api.delete('/auth/me');
+      toast.success('Account deleted');
+      clearSession();
+      navigate('/signup', { replace: true });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete account');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -62,6 +90,25 @@ export default function Settings() {
           Public stats demo
           <span className="text-brand-300">View →</span>
         </Link>
+      </section>
+
+      <section className="card mt-6 border border-red-500/20 bg-red-950/10 p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Trash2 className="h-5 w-5 text-red-300" />
+          <h2 className="text-lg font-semibold text-white">Danger zone</h2>
+        </div>
+        <p className="mb-4 text-sm text-muted">
+          Deleting your account removes all your links and visit analytics. Custom aliases you owned become available again.
+        </p>
+        <button
+          type="button"
+          onClick={handleDeleteAccount}
+          disabled={deleting}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          <Trash2 className="h-4 w-4" />
+          {deleting ? 'Deleting...' : 'Delete account'}
+        </button>
       </section>
     </div>
   );

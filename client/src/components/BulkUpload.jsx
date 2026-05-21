@@ -7,6 +7,7 @@ export default function BulkUpload({ onCreated }) {
   const [csv, setCsv] = useState('');
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState(null);
+  const [showFailures, setShowFailures] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,6 +17,7 @@ export default function BulkUpload({ onCreated }) {
     }
     setUploading(true);
     setResult(null);
+    setShowFailures(false);
     try {
       const res = await api.post('/links/bulk', { csv });
       const { created, failed, summary } = res.data.data;
@@ -56,6 +58,41 @@ export default function BulkUpload({ onCreated }) {
             Success: {result.summary.success} / {result.summary.total}
             {result.failed.length > 0 && ` (${result.failed.length} failed)`}
           </p>
+          {result.failed.length > 0 && (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={() => setShowFailures((v) => !v)}
+                className="text-xs font-medium text-brand-300 hover:text-brand-200"
+              >
+                {showFailures ? 'Hide failure reasons' : 'Show failure reasons'}
+              </button>
+              {showFailures && (
+                <div className="mt-2 max-h-52 overflow-auto rounded-lg border border-slate-700/60 bg-slate-900/40">
+                  <table className="w-full text-left text-xs">
+                    <thead className="sticky top-0 bg-slate-900/80 text-slate-300">
+                      <tr>
+                        <th className="px-3 py-2 font-semibold">Line</th>
+                        <th className="px-3 py-2 font-semibold">Input</th>
+                        <th className="px-3 py-2 font-semibold">Reason</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-slate-200">
+                      {result.failed.map((f) => (
+                        <tr key={`${f.line}-${f.input}`} className="border-t border-slate-800/80">
+                          <td className="whitespace-nowrap px-3 py-2 text-slate-400">{f.line}</td>
+                          <td className="max-w-[260px] truncate px-3 py-2 font-mono text-[11px] text-slate-300" title={f.input}>
+                            {f.input}
+                          </td>
+                          <td className="px-3 py-2 text-red-200">{f.reason}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
