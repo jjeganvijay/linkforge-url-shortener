@@ -73,8 +73,8 @@ export default function QRCodesPage() {
                 fgColor={qrFg}
                 className="rounded-lg"
               />
-              <p className="mt-4 truncate text-sm font-semibold text-brand-300">{link.shortUrl}</p>
-              <p className="mt-1 text-xs text-muted">{truncateUrl(link.originalUrl, 40)}</p>
+              <p className="mt-4 w-full truncate text-sm font-semibold text-brand-300">{link.shortUrl}</p>
+              <p className="mt-1 w-full text-xs text-muted">{truncateUrl(link.originalUrl, 40)}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 <CopyButton text={link.shortUrl} label="Copy URL" />
                 <button
