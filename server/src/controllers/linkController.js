@@ -10,17 +10,31 @@ const {
 const { baseUrl } = require('../config/env');
 const QRCode = require('qrcode');
 
-const formatLink = (link) => ({
+const normalizeBaseUrl = (value) => String(value || '').replace(/\/+$/, '');
+
+const getPublicBaseUrl = (req) => {
+  // Prefer the actual host/proto of the request (Render/Vercel), fallback to configured BASE_URL.
+  const forwardedProto = req.get('x-forwarded-proto');
+  const proto = forwardedProto ? forwardedProto.split(',')[0].trim() : req.protocol;
+  const host = req.get('x-forwarded-host') || req.get('host');
+  if (proto && host) return normalizeBaseUrl(`${proto}://${host}`);
+  return normalizeBaseUrl(baseUrl);
+};
+
+const formatLink = (link, req) => {
+  const publicBaseUrl = req ? getPublicBaseUrl(req) : normalizeBaseUrl(baseUrl);
+  return {
   id: link._id.toString(),
   shortCode: link.shortCode,
-  shortUrl: `${baseUrl}/${link.shortCode}`,
+  shortUrl: `${publicBaseUrl}/${link.shortCode}`,
   originalUrl: decrypt(link.encryptedUrl, link.urlIv, link.urlAuthTag),
   customAlias: link.customAlias,
   expiresAt: link.expiresAt,
   isActive: link.isActive,
   clickCount: link.clickCount,
   createdAt: link.createdAt,
-});
+  };
+};
 
 const createUniqueShortCode = async (preferredCode = null) => {
   if (preferredCode) {
@@ -80,7 +94,7 @@ const createLink = async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Short link created successfully',
-      data: { link: formatLink(link) },
+      data: { link: formatLink(link, req) },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to create short link' });
@@ -115,7 +129,7 @@ const bulkCreateLinks = async (req, res) => {
       const alias = parts[1] || null;
       try {
         const link = await createLinkRecord(req.user._id, url, alias);
-        created.push(formatLink(link));
+        created.push(formatLink(link, req));
       } catch (err) {
         failed.push({ line: i + 1, input: lines[i], reason: err.message });
       }
@@ -140,7 +154,7 @@ const getLinks = async (req, res) => {
     const links = await Link.find({ userId: req.user._id }).sort({ createdAt: -1 });
     res.json({
       success: true,
-      data: { links: links.map(formatLink), total: links.length },
+      data: { links: links.map((l) => formatLink(l, req)), total: links.length },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch links' });
@@ -195,7 +209,7 @@ const updateLink = async (req, res) => {
     res.json({
       success: true,
       message: 'Link updated successfully',
-      data: { link: formatLink(link) },
+      data: { link: formatLink(link, req) },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to update link' });
@@ -209,7 +223,7 @@ const getQRCode = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Link not found' });
     }
 
-    const shortUrl = `${baseUrl}/${link.shortCode}`;
+    const shortUrl = `${getPublicBaseUrl(req)}/${link.shortCode}`;
     const qrDataUrl = await QRCode.toDataURL(shortUrl, { width: 300, margin: 2 });
 
     res.json({
