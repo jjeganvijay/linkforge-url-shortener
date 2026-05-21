@@ -63,7 +63,7 @@ export default function Login() {
 
   return (
     <PageShell showFooter={false}>
-      <MarketingNav showStats={false} />
+      <MarketingNav showStats />
       <div className="flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center px-4 py-12">
         <div className="mb-8 max-w-md animate-fade-in-up text-center">
           <div className="icon-badge mx-auto mb-4 h-14 w-14">

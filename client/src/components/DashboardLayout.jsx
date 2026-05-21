@@ -10,6 +10,7 @@ import {
   QrCode,
   User,
   Settings,
+  Globe,
   X,
 } from 'lucide-react';
 import { LinksProvider } from '../context/LinksContext';
@@ -23,6 +24,7 @@ const mainNav = [
   { to: '/dashboard/bulk', label: 'Bulk upload', icon: Upload, end: false },
   { to: '/dashboard/analytics', label: 'Analytics', icon: BarChart3, end: false },
   { to: '/dashboard/qr', label: 'QR codes', icon: QrCode, end: false },
+  { to: '/stats', label: 'Public stats', icon: Globe, end: false },
 ];
 
 const accountNav = [
